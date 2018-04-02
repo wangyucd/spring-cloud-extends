@@ -19,7 +19,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface ConsumerProcessor {
+public @interface ConsumeProcessor {
 
 	/**
 	 * 订阅的tag
@@ -29,5 +29,5 @@ public @interface ConsumerProcessor {
 	/**
 	 * 请求方消息类型
 	 */
-	Class<?> msgClz() default Object.class;
+	Class<?> msgClazz() default Object.class;
 }

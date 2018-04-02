@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.DisposableBean;
@@ -19,22 +17,10 @@ import org.springframework.context.SmartLifecycle;
 import com.alibaba.rocketmq.client.consumer.DefaultMQPushConsumer;
 import com.alibaba.rocketmq.client.exception.MQClientException;
 
-import me.jollyfly.rocketmq.starter.ConsumerOperator;
-import me.jollyfly.rocketmq.starter.RocketMqConsumerListener;
-
 /**
  * @author jolly
  */
-public class RocketMessageListenerContainer
-		implements
-			InitializingBean,
-			DisposableBean,
-			BeanNameAware,
-			SmartLifecycle,
-			ApplicationContextAware,
-			ConsumerOperator {
-
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+public class RocketMessageListenerContainer implements InitializingBean, DisposableBean, BeanNameAware, SmartLifecycle, ApplicationContextAware {
 
 	private String nameSrvAddr;
 
@@ -83,7 +69,6 @@ public class RocketMessageListenerContainer
 				consumer.start();
 				runningMap.put(topic, consumer);
 			} catch (MQClientException e) {
-				logger.error(e.getErrorMessage());
 				Map.Entry<DefaultMQPushConsumer, String> errEntry = new AbstractMap.SimpleEntry<>(consumer, e.getErrorMessage());
 				startErrMap.put(topic, errEntry);
 			}
