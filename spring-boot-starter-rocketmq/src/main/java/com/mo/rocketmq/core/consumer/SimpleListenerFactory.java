@@ -73,11 +73,11 @@ public class SimpleListenerFactory implements ApplicationContextAware {
 			this.initSubscription = true;
 		}
 
-		private void initSubscriptionGroup(Map<Method, RocketMQListener> annotatedMethod, Object target) {
+		private void initSubscriptionGroup(Map<Method, RocketMqListener> annotatedMethod, Object target) {
 			if (!CollectionUtils.isEmpty(annotatedMethod)) {
 				annotatedMethod.forEach((method, listener) -> {
 					validateMethod(method);
-					RocketListeners rocketListeners = method.getDeclaringClass().getAnnotation(RocketListeners.class);
+					RocketMqListener rocketListeners = method.getDeclaringClass().getAnnotation(RocketMqListener.class);
 					String topic = rocketListeners.topic();
 					String tag = listener.tag();
 					if (subscriptionGroups.containsKey(topic)) {

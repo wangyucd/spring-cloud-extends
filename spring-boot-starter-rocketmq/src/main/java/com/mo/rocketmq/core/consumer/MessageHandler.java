@@ -1,17 +1,16 @@
 package com.mo.rocketmq.core.consumer;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import javax.xml.ws.handler.MessageContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.rocketmq.common.message.MessageExt;
 import com.alibaba.rocketmq.common.message.MessageQueue;
-import com.alibaba.rocketmq.common.protocol.body.ConsumeStatus;
 import com.alibaba.rocketmq.shade.com.alibaba.fastjson.JSON;
-
-import me.jollyfly.rocketmq.starter.RocketMqConsumerListener;
-import me.jollyfly.rocketmq.starter.exception.ConsumeException;
 
 /**
  * 消息处理器
@@ -20,8 +19,11 @@ import me.jollyfly.rocketmq.starter.exception.ConsumeException;
  */
 public class MessageHandler {
 
+	public final static Logger log = LoggerFactory.getLogger(MessageHandler.class);
+
 	@SuppressWarnings("unchecked")
-	public static ConsumeStatus handleMessage(final RocketMqConsumerListener listener, final List<MessageExt> msgs, final MessageQueue messageQueue) {
+	public static ConsumeConcurrentlyStatus handleMessage(final RocketMqConsumerListener listener, final List<MessageExt> msgs,
+			final MessageQueue messageQueue) {
 		try {
 			for (MessageExt msg : msgs) {
 				byte[] body = msg.getBody();
@@ -37,26 +39,10 @@ public class MessageHandler {
 				}
 			}
 		} catch (Exception e) {
-			return handleException(e);
-		}
-		return ConsumeStatus.SUCCESS;
-	}
-
-	/**
-	 * 异常处理
-	 *
-	 * @param e
-	 *            捕获的异常
-	 * @return 消息消费结果
-	 */
-	private static ConsumeStatus handleException(final Exception e) {
-		Class exceptionClass = e.getClass();
-		if (exceptionClass.equals(UnsupportedEncodingException.class)) {
 			log.error(e.getMessage());
-		} else if (exceptionClass.equals(ConsumeException.class)) {
-			log.error(e.getMessage());
+			return ConsumeConcurrentlyStatus.RECONSUME_LATER;
 		}
-		return ConsumeStatus.RETRY;
+		return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
 	}
 
 }
